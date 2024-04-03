@@ -1,0 +1,39 @@
+{
+  "name": "url-shortener",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "dev": "tsx watch --env-file .env ./src/server.ts ",
+    "test": "vitest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/manuelbento19/url-shortener.git"
+  },
+  "keywords": [
+    "url-shortner",
+    "nodejs",
+    "prisma",
+    "docker",
+    "postgres",
+    "fastify"
+  ],
+  "author": "Manuel Bento",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/manuelbento19/url-shortener/issues"
+  },
+  "homepage": "https://github.com/manuelbento19/url-shortener#readme",
+  "devDependencies": {
+    "@types/node": "^20.12.3",
+    "@types/pg": "^8.11.4",
+    "tsx": "^4.7.1",
+    "typescript": "^5.4.3"
+  },
+  "dependencies": {
+    "@fastify/cors": "^9.0.1",
+    "fastify": "^4.26.2",
+    "pg": "^8.11.5"
+  }
+}
