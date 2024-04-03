@@ -1,18 +1,22 @@
 import fastify from 'fastify';
 import cors from '@fastify/cors';
 import { URLValidator } from './util/url';
+import { client } from './database/db';
 
 const app = fastify()
 app.register(cors)
 
 const urlValidator = new URLValidator();
 
-app.get("/:code",(request,response)=>{
+app.get("/:code",async(request,response)=>{
     const {code} = request.params;
     if(!code)
     return {
         error: "Code doesn't exists"
     }
+
+    const urlExist = await client.query(`select * from Shortner where code=='${code}'`);
+    console.log(urlExist);
 
     const url = "https://www.google.com"
     return response.redirect(301,url)
@@ -26,7 +30,9 @@ app.post("/",async(request,response)=>{
     }
 
     try{
-        await urlValidator.checkNetwork(url)
+        const urlExist = await client.query(`select * from Shortner where url=='${url}'`);
+        console.log(urlExist);
+        //await urlValidator.checkNetwork(url)
         return response.send({message:"Good"})
     }
     catch{
