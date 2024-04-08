@@ -5,6 +5,7 @@ import { URLValidator } from './util/url';
 import { client } from './database/db';
 import { CodeGenerator } from './util/code';
 import { RequestDTO } from './types';
+import { AppError } from './util/appError';
 
 const urlValidator = new URLValidator();
 const codeGen = new CodeGenerator()
@@ -13,26 +14,25 @@ const app = fastify()
 app.register(cors)
 
 app.get("/:code",async(request,response)=>{
-    const {code} = request.params as RequestDTO;
-    if(!code)
-    return {
-        error: "Code required"
-    }
-
     try {
+        const {code} = request.params as RequestDTO;
+        if(!code) throw new AppError("Code required")
+
         const {rows} = await client.query(`select * from shortner where code='${code}'`);
         if(rows.length==0)
-            throw Error("Code doesn't exists")
+        throw new AppError("Code doesn't exists")
+        
         return response.redirect(301,rows[0].url)
     } 
-    catch {
+    catch(error) {
+        if(error instanceof AppError)
+        return response.send(error.message)
+
+        console.error("Api",error)
         return response.send({
-            error: "Code doesn't exists"
+            error: "Error while running the api"
         })
     }
-    
-    
-    return 
 })
 
 app.post("/",async(request,response)=>{
@@ -61,7 +61,7 @@ app.post("/",async(request,response)=>{
     }
 })
 
-app.listen({port: 3000},(error)=> console.log("Listen on http://localhost:3000"))
+app.listen({port: 3000},()=> console.log("Listen on http://localhost:3000"))
 
 
   
