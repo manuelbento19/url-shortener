@@ -18,7 +18,7 @@ app.get("/:code",async(request,response)=>{
         const {code} = request.params as RequestDTO;
         if(!code) throw new AppError("Code required")
 
-        const {rows} = await client.query(`select * from shortner where code='${code}'`);
+        const {rows} = await client.query("SELECT * FROM shortner WHERE code=$1",[code]);
         if(rows.length==0)
         throw new AppError("Code doesn't exists")
         
@@ -26,7 +26,7 @@ app.get("/:code",async(request,response)=>{
     } 
     catch(error) {
         if(error instanceof AppError)
-        return response.send(error.message)
+        return response.send({error:error.message})
 
         console.error("Api",error)
         return response.send({
@@ -43,7 +43,7 @@ app.post("/",async(request,response)=>{
     }
 
     try{
-        const {rows} = await client.query("select * from shortner where url=$1",[url]);
+        const {rows} = await client.query("SELECT * FROM shortner WHERE url=$1",[url]);
         if(rows.length>0)
         return response.send({code: rows[0].code})
         
@@ -61,7 +61,9 @@ app.post("/",async(request,response)=>{
     }
 })
 
-app.listen({port: 3000},()=> console.log("Listen on http://localhost:3000"))
+const port = Number(process.env.APP_PORT) ?? 3000;
+
+app.listen({port,host:"0.0.0.0"},()=> console.log(`Listen on http://127.0.0.1:${port}`))
 
 
   

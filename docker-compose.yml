@@ -3,15 +3,19 @@ version: "3"
 services:
   database:
     image: postgres:latest
-    container_name: database
+    container_name: shortner_database
     env_file: .env
-    environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_PORT=${POSTGRES_PORT}
     volumes:
       - ./postgres:/var/lib/postgresql/data
     ports:
       - 5432:5432
     restart: always
+  
+  api:
+    build: .
+    container_name: shortner_app
+    env_file: .env
+    ports:
+      - 3000:3000
+    depends_on:
+      - database

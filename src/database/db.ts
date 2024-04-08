@@ -2,6 +2,7 @@ import { Pool } from "pg";
 import config from './../config/database'
 
 export const client = new Pool({
+    host: config.host,
     user: config.user,
     password: config.password,
     database: config.database,
